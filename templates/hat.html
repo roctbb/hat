@@ -71,6 +71,8 @@
 
                     if (self.word == "слова закончились")
                     {
+                        clearInterval(self.interval);
+                        self.interval = -1;
                         self.is_playing = false;
                     }
                 })
