@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div class="container" style="align-items: center; margin-left: auto; margin-right: auto; text-align: center; margin-top: 30px;">
+    <div id="app">
+        <h3>Какая-то шляпа...</h3>
+
+        <p>Счет: [[ score ]]</p>
+
+        <div v-if="is_playing">
+            <p>[[ time ]]</p>
+            <h1>[[ word ]]</h1>
+
+            <button class="btn btn-success btn-lg" @click="guessed()">Отгадано</button>
+            <button class="btn btn-danger btn-lg" @click="nextWord()">Пропустить</button>
+        </div>
+        <div v-else>
+            <button class="btn btn-primary btn-lg" @click="startRound()">Начать раунд</button>
+        </div>
+    </div>
+
+</div>
+<!-- development version, includes helpful console warnings -->
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        delimiters : ['[[',']]'],
+        data: {
+            score: 0,
+            is_playing: false,
+            time: 60,
+            word: '',
+            interval: -1
+        },
+        methods: {
+            startRound: function () {
+                console.log("starting")
+                var self = this;
+                this.is_playing = true;
+                this.nextWord();
+                this.interval = setInterval(function () {
+                    self.time -= 1;
+
+                    if (self.time == 0) {
+                        clearInterval(self.interval);
+                        self.interval = -1;
+                        self.is_playing = false;
+                    }
+                }, 1000);
+            },
+            guessed: function () {
+                this.score += 1
+
+                axios.post(location.href + '/remove', {word: this.word}).then(function (response) {});
+                this.nextWord()
+            },
+            nextWord: function () {
+                var self = this;
+                axios.get(location.href + '/get').then(function (response) {
+                    self.word = response.data
+
+                    if (self.word == "слова закончились")
+                    {
+                        self.is_playing = false;
+                    }
+                })
+            }
+
+        }
+    })
+</script>
+
+
+</body>
+</html>
