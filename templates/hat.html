@@ -45,6 +45,7 @@
             startRound: function () {
                 console.log("starting")
                 var self = this;
+                this.time = 60;
                 this.is_playing = true;
                 this.nextWord();
                 this.interval = setInterval(function () {
