@@ -35,4 +35,4 @@ def restart():
     return 'ok'
 
 init()
-app.run(host='0.0.0.0', port=3456, debug=True)
+app.run(host='0.0.0.0', port=3456, debug=False)
